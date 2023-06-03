@@ -36,7 +36,7 @@ import Cancel from 'mdi-react/CancelBoldIcon'
 import Right from 'mdi-react/CheckIcon'
 import SignIn from 'mdi-react/SignInIcon';
 import SignOut from 'mdi-react/SignOutIcon';
-import TrackOrder from 'mdi-react/MapMarkerDistanceIcon';
+import TrackOrder from 'mdi-react/TrackChangesIcon';
 import YourUpload from 'mdi-react/UploadIcon';
 import ArrowDown from 'mdi-react/ArrowDropDownIcon'
 
@@ -74,7 +74,6 @@ export default function buy()
     const [successToastMsg,setSuccessToastMsg]=useState("");
     const [warnToastMsg,setWarnToastMsg]=useState("");
     const [x1, setX1] = useState(0);
-    const [requestSentId,setRequestSentId]=useState([]);
 
     useEffect(() => {
         setLoading(true);  
@@ -112,14 +111,13 @@ export default function buy()
                 data.map((item=>{
                     if(item.wishlist.includes(email))
                     {
-                        if(!wishIds.includes(item._id)) 
+                        if(wishIds.includes(item._id)) 
+                        {
+
+                        }
+                        else 
                         {
                             setwishIds(oldArray =>[...oldArray, item._id])
-                        }
-                        if(item.customers.includes(email))
-                        {
-                            if(!requestSentId.includes(item._id)) 
-                            {  setRequestSentId(oldArray =>[...oldArray, item._id])}
                         }
                     } 
                 }
@@ -324,28 +322,13 @@ export default function buy()
             try
             {
                 const response =await axios.post(url, data);
-                if(response.data.key=="empty")
-                {
-                    setWarnToast(true);
-                    setWarnToastMsg("A request was already sent")
-                    handleX1();
-                    setTimeout(() => {
-                        setWarnToastMsg("")
-                        setWarnToast(false);
-                    }, 4000);
-                }
-                else
-                {
-                    if(!requestSentId.includes(idValue)) 
-                    {  setRequestSentId(oldArray =>[...oldArray, idValue])}
-                    setSuccessToast(true);
-                    setSuccessToastMsg("Request Sent Successfully!")
-                    handleX1();
-                    setTimeout(() => {
-                        setSuccessToastMsg("")
-                        setSuccessToast(false);
-                    }, 4000);
-                }
+                setSuccessToast(true);
+                setSuccessToastMsg("Request Sent Successfully!")
+                handleX1();
+                setTimeout(() => {
+                    setSuccessToastMsg("")
+                    setSuccessToast(false);
+                }, 4000);
             }
             catch(error)
             {
@@ -464,13 +447,16 @@ export default function buy()
                     </div>
                 </div>
                 <div className="md:pr-12 pr-2 flex flex-row items-center">
-                    <a href='/track' className={windowSize.width>1024?'md:pr-8 cursor-pointer':'hidden'}>
+                    <div className={windowSize.width>1024?'md:pr-8 cursor-pointer':'hidden'}>
                         <TrackOrder size={32} color='#11d7ac'/>
-                    </a>
-                    <a href='/wishlist' className={windowSize.width>1024?'relative cursor-pointer':'hidden'}>
+                    </div>
+                    <div className={windowSize.width>1024?'md:pr-8 cursor-pointer':'hidden'}>
+                        <YourUpload  size={32} color='#11d7ac'/>
+                    </div>
+                    <div className={windowSize.width>1024?'relative cursor-pointer':'hidden'}>
                         <div className={wishIds.length>0?'absolute -top-2 z-50 -right-2 text-white bg-red-600 w-5 text-center h-5 text-sm rounded-full':'hidden'}>{wishIds.length}</div>
                         <WishList className=' top-0' size={32} color='#11d7ac'/>
-                    </a>
+                    </div>
                     <div className='md:pl-12'>
                         <button onClick={()=>handleProfile()}>
                         {
@@ -568,7 +554,15 @@ export default function buy()
                         <div className='pl-4'>
                             Track Orders
                         </div>
-                    </a>  
+                    </a> 
+                    <a href='/yourUploads'className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>
+                        <div>
+                            <YourUpload  color='#8A307F'/>
+                        </div>
+                        <div className='pl-4'>
+                            Your Uploads
+                        </div>
+                    </a > 
                     <a href='wishlist' className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>
                         <div>
                             <WishList  color='#8A307F'/>
@@ -767,17 +761,9 @@ export default function buy()
                         <div className='px-4 text-xs'>
                             Contact: {fullItem.contact}
                         </div>
-                        {
-                            requestSentId.includes(fullItem._id)?(
-                                <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
-                                    Request Sent Already!
-                                </div>
-                            ):(
-                                <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
-                                    <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
-                                </div>
-                            )
-                        }
+                        <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-sm shadow-lg text-white text-center'>
+                            <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
+                        </div>
                     </div>
                 </div>
             ):
@@ -841,7 +827,7 @@ export default function buy()
                             {fullItem.specs}
                         </div>
                         <div className='flex flex-row py-2 px-4 items-center'>
-                            <div className='pl-1'>
+                            <div className='pl-1 line-through'>
                                 {fullItem.place}
                             </div>
                         </div>
@@ -851,17 +837,9 @@ export default function buy()
                         <div className='px-4 text-xs'>
                             Contact: {fullItem.contact}
                         </div>
-                        {
-                            requestSentId.includes(fullItem._id)?(
-                                <div className='py-4 px-4 mx-auto mt-6 cursor-pointer bg-slate-200 w-[4/5] rounded-lg shadow-2xl text-center'>
-                                    Request Sent Already!
-                                </div>
-                            ):(
-                                <div className='py-4 px-4 mx-auto mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-lg shadow-lg text-white text-center'>
-                                    <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
-                                </div>
-                            )
-                        }
+                        <div className='py-4 px-4 mx-auto mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-sm shadow-lg text-white text-center'>
+                        <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
+                        </div>
                     </div>
                 </div>
             ):
@@ -953,7 +931,7 @@ export default function buy()
                 (
                     data?(
                         <div className='mt-8 md:px-12'>
-                        <div className={`grid lg:grid-cols-${cols} lg:w-${width} w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
+                        <div className={width=="1/2"?`grid lg:grid-cols-${cols} lg:w-1/2 w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`:`grid lg:grid-cols-${cols} lg:w-full w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
                             {data.map((item) => (
                             <div className='mb-4 shadow-lg h-auto p-4 w-full relative ' id={item._id}>
                                 <div className='flex flex-col bg-white h-full justify-between'>

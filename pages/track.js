@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import axios from 'axios';
 import Navbar from "@/components/Navbar"
-import ReceivedRequests from "@/components/"
 import {useSession,signIn,signOut,getSession} from 'next-auth/react'
 import React,{ useEffect, useState } from "react";
 import CartAlt from '../public/assets/cart.png'
@@ -17,7 +16,8 @@ export default function yourUploadFile() {
     const {data:session}=useSession();
     const [isLoading, setLoading] = useState(false);
     const [email,setEmail]=useState("sample@gamil.com")
-    const [data, setData] = useState(null)
+    const [data1, setData1] = useState(null)
+    const [data2, setData2] = useState(null)
     const [successToast,setSuccessToast]=useState(false);
     const [warnToast,setWarnToast]=useState(false);
     const [successToastMsg,setSuccessToastMsg]=useState("");
@@ -29,6 +29,8 @@ export default function yourUploadFile() {
     const [deleteProduct,setDeleteProduct]=useState(null);
     const [acceptId,setAcceptId]=useState(null);
     const [acceptEmail,setAcceptEmail]=useState(null);
+    const [cancelId,setCancelId]=useState(null);
+    const [cancelEmail,setCancelEmail]=useState(null);
     const [windowSize, setWindowSize] = useState({
         width: undefined,
         height: undefined,
@@ -39,7 +41,10 @@ export default function yourUploadFile() {
     const [mobView,setMobView]=useState(false);
     const [fullItem,setFullItem]=useState(null);
     const [acceptPopUp,setAcceptPopUp] = useState(false);
+    const [cancelPopUp,setCancelPopUp] = useState(false);
+    const [orderType,setOrderType]=useState("recieve");
     const [count, setCount] = useState(0); //count when the accept item is executed
+    const [num,setNum]=useState(0);
 
   useEffect(()=>{
     setLoading(true);  
@@ -59,6 +64,7 @@ export default function yourUploadFile() {
         setWidth("  full");
         setCols("4");
         setAcceptPopUp(false);
+        setCancelPopUp(false);
     };
     async function fetchData() {
         try
@@ -66,16 +72,27 @@ export default function yourUploadFile() {
             const postData = {
                 email: email,
             };
-            const res = await axios.post('http://localhost:4000/yourUploads',postData);
-            const data = await res.data;
-            if(data.length) setData(data);
-            else setData(null)
-            data.map((item=>{
+
+            const [res1, res2] = await Promise.all([
+                axios.post('http://localhost:4000/yourUploads',postData),
+                axios.post('http://localhost:4000/yourOrders',postData),
+            ]);
+            
+            const data1 = await res1.data;
+            const data2 = await res2.data;
+
+            if(data1.length) setData1(data1);
+            else setData1(null)
+
+            if(data2.length) setData2(data2);
+            else setData2(null)
+
+            data1.map((item=>{
                 if(!deleteIds.includes(item._id)) 
                 {setDeleteIds(oldArray =>[...oldArray, item._id])}
-
             }
             ))
+
             setLoading(false);
         }
         catch(error)
@@ -100,6 +117,7 @@ export default function yourUploadFile() {
     return () => {
         window.removeEventListener('resize', handleResize);
     };
+
   },[session,count])
 
   const handleDeletePopUp=(idValue,product)=>
@@ -108,6 +126,7 @@ export default function yourUploadFile() {
       setDeleteId(idValue);
       setDeleteProduct(product);
       setAcceptPopUp(false);
+      setCancelPopUp(false);
   }
 
   const deleteThis=(idValue) =>
@@ -162,44 +181,48 @@ export default function yourUploadFile() {
       }
   };
 
-  const dontDeleteThis=()=>
-  {
-      setDeleteId(null);
-      setDeleteProduct(null);
-      setDeletePopUp(false);
-      setAcceptId(null);
-      setAcceptEmail(null);
-      setAcceptPopUp(false);
-  }
-
-  const handleView=(item)=>
+    const dontDeleteThis=()=>
     {
-        if(session)
+        setDeleteId(null);
+        setDeleteProduct(null);
+        setDeletePopUp(false);
+        setAcceptId(null);
+        setCancelId(null);
+        setAcceptEmail(null);
+        setCancelEmail(null)
+        setAcceptPopUp(false);
+        setCancelPopUp(false);
+    }
+
+    const handleView=(item,num)=>
         {
-            if(windowSize.width>1024) 
+            setNum(num);
+            if(session)
             {
-                setWebView(true);
-                setFullItem(item);
-                setWidth("1/2");
-                setCols("2");
+                if(windowSize.width>1024) 
+                {
+                    setWebView(true);
+                    setFullItem(item);
+                    setWidth("1/2");
+                    setCols("2");
+                }
+                else
+                {
+                    setMobView(true);
+                    setFullItem(item);
+                }      
             }
             else
             {
-                setMobView(true);
-                setFullItem(item);
-            }      
-        }
-        else
-        {
-            setWarnToast(true);
-            setWarnToastMsg("Please login first to view this item");
-            handleX1();
-            setTimeout(() => {
-                setWarnToastMsg("")
-                setWarnToast(false);
-            }, 4000);
-        }
-  }
+                setWarnToast(true);
+                setWarnToastMsg("Please login first to view this item");
+                handleX1();
+                setTimeout(() => {
+                    setWarnToastMsg("")
+                    setWarnToast(false);
+                }, 4000);
+            }
+    }
 
     const handleViewCancel=(item) =>
     {
@@ -209,8 +232,11 @@ export default function yourUploadFile() {
         setWidth("full");
         setCols("4");
         setAcceptPopUp(false);
+        setCancelPopUp(false);
         setDeletePopUp(false);
         setAcceptId(null);
+        setCancelId(null);
+        setCancelEmail(null)
         setAcceptEmail(null);
         setDeleteId(null);
         
@@ -233,14 +259,16 @@ export default function yourUploadFile() {
     const accepThis=(idValue,customer)=>
     {
         setAcceptPopUp(true);
+        setCancelPopUp(false);
         setAcceptId(idValue);
-        setAcceptEmail(customer);
+        setCancelId(null);
         setAcceptEmail(customer);
     }
 
     const finalAccept=(idValue,customer) =>
     {
         setAcceptPopUp(false);
+        setCancelPopUp(false);
         const data = {
             id: idValue,
             accept:customer
@@ -271,7 +299,56 @@ export default function yourUploadFile() {
             }
         }
         setAcceptId(null);
+        setCancelId(null);
         setAcceptEmail(null);
+    }
+
+
+    const cancelOrder=(idValue,customer)=>
+    {
+        setCancelPopUp(true);
+        setAcceptPopUp(false);
+        setCancelId(idValue)
+        setCancelEmail(customer)
+    }
+
+    const finalCancel=(idValue,customer) =>
+    {
+        setAcceptPopUp(false);
+        setCancelPopUp(false);
+        const data = {
+            id: idValue,
+            email:customer
+        };
+        postData('http://localhost:4000/cancelOrder',data)   
+        async function postData(url,data) {
+            try
+            {
+                  const response =await axios.post(url, data);
+                  setCount(count+1);
+                  setSuccessToast(true);
+                  setSuccessToastMsg("Ordered Cancelled!")
+                  handleX1();
+                  setTimeout(() => {
+                      setSuccessToastMsg("")
+                      setSuccessToast(false);
+                  }, 4000);
+                  
+            }
+            catch(error)
+            {
+                setWarnToast(true);
+                setWarnToastMsg("Server Issue! Please try after some time.")
+                setTimeout(() => {
+                    setWarnToastMsg("")
+                    setWarnToast(false);
+                }, 4000);
+            }
+        }
+        setAcceptId(null);
+        setCancelId(null);
+        setAcceptEmail(null);
+        setCancelEmail(null);
     }
 
     const handleX1=()=>
@@ -294,6 +371,12 @@ export default function yourUploadFile() {
                 setX1(nextX2);
         }
         }, stepDuration);
+    }
+
+
+    const handleRequest=(order)=>
+    {
+        setOrderType(order);
     }
   
   return (
@@ -326,45 +409,94 @@ export default function yourUploadFile() {
                     </div>
                 ):
                 (
-                    data?(
+                    (data1 || data2)?(
                         <div className='mt-28 md:px-12'>
                             {/* Title */}
                             <div className='lg:mx-16 text-md bg-[#11d7ac] font-bold w-auto h-auto rounded-lg px-2 py-2 shadow-lg text-center text-white '>
                                 Your Uploads And Track Your Orders...... <span className='text-sm text-black'>click delete icon to delete the item</span>
                             </div>
-
-                            <div className={`grid lg:grid-cols-${cols} lg:w-${width} w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
-                            {data.map((item) => (
-                            <div className={deleteIds.includes(item._id)?'mb-4 shadow-lg h-auto p-4 w-full relative':'hidden'} id={item._id}>
-                                <div className='flex flex-col bg-white h-full justify-between'>
-                                    <div className='my-auto'>
-                                        <div className='absolute cursor-pointer top-0 right-1 p-2 rounded-full'>
-                                            <button onClick={()=>handleDeletePopUp(item._id,item._product)}>
-                                                <DeleteIcon size='28' color='red'/>
-                                            </button>
-                                        </div>                                        
-                                        <Image
-                                        className="w-auto h-auto aspect-auto"
-                                        src={item.images[0]?"/../public/uploads/"+item.images[0]:CartAlt}
-                                        alt='../public/assets/cart.png'
-                                        width={800}
-                                        height={20}
-                                        />
+                            <div className="flex flex-row justify-between mt-8 mx-auto lg:w-96 w-72 bg-white border-slate-200 shadow-2xl border-2">
+                                <button onClick={()=>handleRequest("recieve")} className={(orderType=="recieve")?'w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 ':'w-full font-bold h-auto bg-white md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 '}>Orders Recieved</button>
+                                <button onClick={()=>handleRequest("send")} className={(orderType=="send")?"w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-2 transition-colors duration-1000 ":"w-full font-bold h-auto md:py-4 py-1 md:px-2 px-2 bg-white transition-colors duration-1000 "}>Orders Placed</button>
+                            </div>
+                            <div>
+                                {orderType=="recieve"?(
+                                    <div>
+                                        {data1?(
+                                        <div className={width=="1/2"?`grid lg:grid-cols-${cols} lg:w-1/2 w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`:`grid lg:grid-cols-${cols} lg:w-full w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
+                                        {data1.map((item) => (
+                                             <div className={deleteIds.includes(item._id)?'mb-4 shadow-lg h-auto p-4 w-full relative':'hidden'} id={item._id}>
+                                                 <div className='flex flex-col bg-white h-full justify-between'>
+                                                     <div className='my-auto'>
+                                                         <div className='absolute cursor-pointer top-0 right-1 p-2 rounded-full'>
+                                                             <button onClick={()=>handleDeletePopUp(item._id,item._product)}>
+                                                                 <DeleteIcon size='28' color='red'/>
+                                                             </button>
+                                                         </div>                                        
+                                                         <Image
+                                                         className="w-auto h-auto aspect-auto"
+                                                         src={item.images[0]?"/../public/uploads/"+item.images[0]:CartAlt}
+                                                         alt='../public/assets/cart.png'
+                                                         width={800}
+                                                         height={20}
+                                                         />
+                                                     </div>
+                                                     <div className='flex flex-col pt-2'>
+                                                         <div className='font-bold flex justify-between w-full flex-row text-[#8A307F] font-mono text-lg'>
+                                                             <div>{item.product}</div>
+                                                             <div className='text-black text-md'>{item.type}</div>
+                                                         </div>
+                                                         <div className='bg-[#11d7ac] cursor-pointer py-2 mx-auto text-white md:text-md my-2 font-mono md:px-6 px-4 rounded-md shadow-md'>
+                                                             <button onClick={()=>handleView(item,"1")}>Track This</button>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>  
+                                             ))}
+                                             </div>
+                                        ):
+                                        (
+                                            <div className='mt-10 text-center w-72 shadow-2xl mx-auto text-black py-2 font-bold bg-slate-200'>NO RECIEVED REQUESTS</div>
+                                        )}
                                     </div>
-                                    <div className='flex flex-col pt-2'>
-                                        <div className='font-bold flex justify-between w-full flex-row text-[#8A307F] font-mono text-lg'>
-                                            <div>{item.product}</div>
-                                            <div className='text-black text-md'>{item.type}</div>
-                                        </div>
-                                        <div className='bg-[#11d7ac] cursor-pointer py-2 mx-auto text-white md:text-md my-2 font-mono md:px-6 px-4 rounded-md shadow-md'>
-                                            <button onClick={()=>handleView(item)}>Track This</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                            ))}
-    
-                        </div>
+                                ):
+                                (
+                                    <div>
+                                        {data2?(
+                                        <div className={width=="1/2"?`grid lg:grid-cols-${cols} lg:w-1/2 w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`:`grid lg:grid-cols-${cols} lg:w-full w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
+                                        {data2.map((item) => (
+                                             <div className='mb-4 shadow-lg h-auto p-4 w-full relative' id={item._id}>
+                                                 <div className='flex flex-col bg-white h-full justify-between'>
+                                                     <div className='my-auto'>                                       
+                                                         <Image
+                                                         className="w-auto h-auto aspect-auto"
+                                                         src={item.images[0]?"/../public/uploads/"+item.images[0]:CartAlt}
+                                                         alt='../public/assets/cart.png'
+                                                         width={800}
+                                                         height={20}
+                                                         />
+                                                     </div>
+                                                     <div className='flex flex-col pt-2'>
+                                                         <div className='font-bold flex justify-between w-full flex-row text-[#8A307F] font-mono text-lg'>
+                                                             <div>{item.product}</div>
+                                                             <div className='text-black text-md'>{item.type}</div>
+                                                         </div>
+                                                         <div className='bg-[#11d7ac] cursor-pointer py-2 mx-auto text-white md:text-md my-2 font-mono md:px-6 px-2 rounded-md shadow-md'>
+                                                             <button onClick={()=>handleView(item,"2")}>Details</button>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>  
+                                             ))}
+                                             </div>
+                                        ):
+                                        (
+                                            <div className='mt-10 text-center w-72 shadow-2xl mx-auto text-black py-2 font-bold bg-slate-200'>NO ORDERS PLACED</div>
+                                        )}
+                                    </div>               
+                                )}
+                            </div>
+                           
                         </div>
                     ):
                     (
@@ -383,7 +515,7 @@ export default function yourUploadFile() {
           ):
           (
             <div className="text-lg mt-24 text-center font-bold bg-slate-50 rounded-lg shadow-xl  px-6 py-2 mx-auto w-80">
-              PLease Login First to upload a new item
+              PLease Login First to track your orders
             </div>
           )
         }
@@ -439,44 +571,60 @@ export default function yourUploadFile() {
                                 {fullItem.date}
                             </div>
                         </div>
-                        {fullItem.acceptedTo?(
-                            <div className='text-sm text-black bg-slate-200 font-bold text-center w-72 py-2'>
-                                Accepted to {fullItem.acceptedTo}
+                        {num==1?(
+                            <div>
+                                {fullItem.acceptedTo?(
+                                    <div className='text-sm text-black mx-auto bg-slate-200 font-bold text-center w-72 py-2'>
+                                        Accepted to {fullItem.acceptedTo}
+                                    </div>
+                                ):(
+                                    <div>
+                                        {fullItem.type=="sell"?(
+                                        <div className='flex flex-col w-full items-center'>
+                                            <span className='text-sm mb-2'>These people are ready to buy your product. Negotiate and accept to any one</span>
+                                            {fullItem.customers.map((customer)=>(
+                                                <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                    <button onClick={()=>accepThis(fullItem._id,customer)}>{customer}</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ):(
+                                    <div>
+                                            {fullItem.type=="lost"?(
+                                            <div className='flex flex-col w-full items-center'>
+                                                <span className='text-sm mb-2'>Your item is found by him/her. please connect to him/her to take it</span>
+                                                {fullItem.customers.map((customer)=>(
+                                                    <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                        <button onClick={()=>accepThis(fullItem._id,customer)}>Connect to {customer}</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            ):(
+                                            <div>
+                                                <span className='text-sm mb-2'>This item belongs to him/her. Please give it</span>
+                                                {fullItem.customers.map((customer)=>(
+                                                    <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                        <button onClick={()=>accepThis(fullItem._id,customer)}>Give it to {customer}</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                    </div>
+                                    )}
+                                    </div>
+                                )}
                             </div>
                         ):(
                             <div>
-                                {fullItem.type=="sell"?(
-                                <div className='flex flex-col w-full items-center'>
-                                    <span className='text-sm mb-2'>These people are ready to buy your product. Negotiate and accept to any one</span>
-                                    {fullItem.customers.map((customer)=>(
-                                        <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                            <button onClick={()=>accepThis(fullItem._id,customer)}>{customer}</button>
-                                        </div>
-                                    ))}
-                                </div>
-                            ):(
-                            <div>
-                                    {fullItem.type=="lost"?(
-                                    <div className='flex flex-col w-full items-center'>
-                                        <span className='text-sm mb-2'>Your item is found by him/her. please connect to him/her to take it</span>
-                                        {fullItem.customers.map((customer)=>(
-                                            <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                                <button onClick={()=>accepThis(fullItem._id,customer)}>Connect to {customer}</button>
-                                            </div>
-                                        ))}
+                                {fullItem.acceptedTo==email?(
+                                    <div className='bg-slate-200 text-center mx-auto w-72 py-2 text-black text-sm font-bold'>
+                                        Your order was accepted by {fullItem.email} 
                                     </div>
-                                    ):(
-                                    <div>
-                                        <span className='text-sm mb-2'>This item belongs to him/her. Please give it</span>
-                                        {fullItem.customers.map((customer)=>(
-                                            <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                                <button onClick={()=>accepThis(fullItem._id,customer)}>Give it to {customer}</button>
-                                            </div>
-                                        ))}
+                                ):(
+                                    <div className='text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl'>
+                                        <button onClick={()=>cancelOrder(fullItem._id,email)}>Cancel Order</button>
                                     </div>
-                                    )}
-                            </div>
-                            )}
+                                )}
                             </div>
                         )}
                     </div>
@@ -540,44 +688,60 @@ export default function yourUploadFile() {
                                 {fullItem.date}
                             </div>
                         </div>
-                        {fullItem.acceptedTo?(
-                            <div className='text-sm text-black bg-slate-200 font-bold text-center w-72 py-2'>
-                                Accepted to {fullItem.acceptedTo}
+                        {num==1?(
+                            <div>
+                                {fullItem.acceptedTo?(
+                                    <div className='text-sm text-black mx-auto bg-slate-200 font-bold text-center w-72 py-2'>
+                                        Accepted to {fullItem.acceptedTo}
+                                    </div>
+                                ):(
+                                    <div>
+                                        {fullItem.type=="sell"?(
+                                        <div className='flex flex-col w-full items-center'>
+                                            <span className='text-sm mb-2'>These people are ready to buy your product. Negotiate and accept to any one</span>
+                                            {fullItem.customers.map((customer)=>(
+                                                <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                    <button onClick={()=>accepThis(fullItem._id,customer)}>{customer}</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ):(
+                                    <div>
+                                            {fullItem.type=="lost"?(
+                                            <div className='flex flex-col w-full items-center'>
+                                                <span className='text-sm mb-2'>Your item is found by him/her. please connect to him/her to take it</span>
+                                                {fullItem.customers.map((customer)=>(
+                                                    <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                        <button onClick={()=>accepThis(fullItem._id,customer)}>Connect to {customer}</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            ):(
+                                            <div>
+                                                <span className='text-sm mb-2'>This item belongs to him/her. Please give it</span>
+                                                {fullItem.customers.map((customer)=>(
+                                                    <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
+                                                        <button onClick={()=>accepThis(fullItem._id,customer)}>Give it to {customer}</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                    </div>
+                                    )}
+                                    </div>
+                                )}
                             </div>
                         ):(
                             <div>
-                                {fullItem.type=="sell"?(
-                                <div className='flex flex-col w-full items-center'>
-                                    <span className='text-sm mb-2'>These people are ready to buy your product. Negotiate and accept to any one</span>
-                                    {fullItem.customers.map((customer)=>(
-                                        <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                            <button onClick={()=>accepThis(fullItem._id,customer)}>{customer}</button>
-                                        </div>
-                                    ))}
-                                </div>
-                            ):(
-                            <div>
-                                    {fullItem.type=="lost"?(
-                                    <div className='flex flex-col w-full items-center'>
-                                        <span className='text-sm mb-2'>Your item is found by him/her. please connect to him/her to take it</span>
-                                        {fullItem.customers.map((customer)=>(
-                                            <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                                <button onClick={()=>accepThis(fullItem._id,customer)}>Connect to {customer}</button>
-                                            </div>
-                                        ))}
+                                {fullItem.acceptedTo==email?(
+                                    <div className='bg-slate-200 text-center mx-auto w-72 py-2 text-black text-sm font-bold'>
+                                        Your order was accepted by {fullItem.email} 
                                     </div>
-                                    ):(
-                                    <div>
-                                        <span className='text-sm mb-2'>This item belongs to him/her. Please give it</span>
-                                        {fullItem.customers.map((customer)=>(
-                                            <div className={customer?'text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl':'hidden'}>
-                                                <button onClick={()=>accepThis(fullItem._id,customer)}>Give it to {customer}</button>
-                                            </div>
-                                        ))}
+                                ):(
+                                    <div className='text-white text-md cursor-pointer text-center w-72 py-2 mb-2 bg-[#11d7ac] shadow-xl'>
+                                        <button onClick={()=>cancelOrder(fullItem._id,email)}>Cancel Order</button>
                                     </div>
-                                    )}
-                            </div>
-                            )}
+                                )}
                             </div>
                         )}
                     </div>
@@ -645,6 +809,17 @@ export default function yourUploadFile() {
                     Are you sure you want to accept this to {acceptEmail}? 
                 </div>
                 <button className='py-3 text-white font-bold bg-green-400 my-6 text-center w-64 rounded-lg shadow-sm cursor-pointer' onClick={()=>finalAccept(acceptId,acceptEmail)}>Yes Accept</button>
+                <button className='py-3 text-white font-bold bg-red-400 mb-6 text-center w-64 rounded-lg shadow-md cursor-pointer' onClick={()=>dontDeleteThis()}>No</button>   
+            </div>
+        </div>
+
+         {/* Confirm Cancel PopUp */}
+         <div className={cancelPopUp &&( webView || mobView )?'fixed top-0 left-0 w-full flex items-center justify-center z-[100] bg-white rounded-lg shadow-2xl px-8 py-4':'hidden'}>
+            <div className='flex flex-col'>
+                <div className=''>
+                    Are you sure you want to cancel this to order? 
+                </div>
+                <button className='py-3 text-white font-bold bg-green-400 my-6 text-center w-64 rounded-lg shadow-sm cursor-pointer' onClick={()=>finalCancel(cancelId,cancelEmail)}>Yes Accept</button>
                 <button className='py-3 text-white font-bold bg-red-400 mb-6 text-center w-64 rounded-lg shadow-md cursor-pointer' onClick={()=>dontDeleteThis()}>No</button>   
             </div>
         </div>

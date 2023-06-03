@@ -1002,7 +1002,7 @@ export default function buy()
                 (
                     data?(
                         <div className='mt-8 md:px-12'>
-                        <div className={`grid lg:grid-cols-${cols} lg:w-${width} w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
+                        <div className={width=="1/2"?`grid lg:grid-cols-${cols} lg:w-1/2 w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`:`grid lg:grid-cols-${cols} lg:w-full w-full lg:gap-16 grid-cols-2 lg:px-6 gap-2`}>
                             {data.map((item) => (
                             <div className='mb-4 shadow-lg h-auto p-4 w-full relative ' id={item._id}>
                                 <div className='flex flex-col bg-white h-full justify-between'>
