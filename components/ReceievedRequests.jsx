@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import axios from 'axios';
-import Navbar from "@/components/Navbar"
-import ReceivedRequests from "@/components/"
 import {useSession,signIn,signOut,getSession} from 'next-auth/react'
 import React,{ useEffect, useState } from "react";
 import CartAlt from '../public/assets/cart.png'
@@ -11,8 +9,7 @@ import DeleteIcon from 'mdi-react/BinIcon'
 import Cancel from 'mdi-react/CancelBoldIcon'
 
 
-
-export default function yourUploadFile() {
+export default function ReceivedRequests() {
 
     const {data:session}=useSession();
     const [isLoading, setLoading] = useState(false);
@@ -298,7 +295,6 @@ export default function yourUploadFile() {
   
   return (
     <div>
-        <Navbar/>
         {
           session?(
             <div>
@@ -387,7 +383,7 @@ export default function yourUploadFile() {
             </div>
           )
         }
-
+        
         {/* Web View Full Card (>1024px*/}
         <div className={webView?'fixed top-20 right-2 w-1/2 z-40  px-2 pt-4 overflow-auto scrollbar-hide mx-auto my-auto shadow-2xl h-5/6 bg-slate-200 ':'hidden'}>
             {fullItem?(

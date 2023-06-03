@@ -187,6 +187,20 @@ export default function Form2() {
         }, stepDuration);
   }
 
+  const handleCancelToastMsg=(type)=>
+    {
+        if(type=="success")
+        {
+            setSuccessToast(false);
+            setSuccessToastMsg("");
+        }
+        else 
+        {
+            setWarnToast(false);
+            setWarnToastMsg("");
+        }
+    }
+
 
 
   return (

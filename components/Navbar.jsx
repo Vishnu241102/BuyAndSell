@@ -13,7 +13,6 @@ import Cancel from 'mdi-react/CancelBoldIcon'
 import SignIn from 'mdi-react/SignInIcon';
 import SignOut from 'mdi-react/SignOutIcon';
 import TrackOrder from 'mdi-react/MapMarkerDistanceIcon';
-import YourUpload from 'mdi-react/UploadIcon';
 
 const Navbar=({ user })=>
 {
@@ -257,14 +256,6 @@ const Navbar=({ user })=>
                         </div>
                         <div className='pl-4'>
                             Track Orders
-                        </div>
-                    </a> 
-                    <a href='/yourUploads' className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>
-                        <div>
-                            <YourUpload  color='#8A307F'/>
-                        </div>
-                        <div className='pl-4'>
-                            Your Uploads
                         </div>
                     </a> 
                     <a href='/wishlist' className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>

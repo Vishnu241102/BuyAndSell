@@ -462,9 +462,6 @@ export default function buy()
                     <a href='/track' className={windowSize.width>1024?'md:pr-8 cursor-pointer':'hidden'}>
                         <TrackOrder size={32} color='#11d7ac'/>
                     </a>
-                    <a href='yourUploads' className={windowSize.width>1024?'md:pr-8 cursor-pointer':'hidden'}>
-                        <YourUpload  size={32} color='#11d7ac'/>
-                    </a>
                     <a href='/wishlist' className={windowSize.width>1024?'relative cursor-pointer':'hidden'}>
                         <div className={wishIds.length>0?'absolute -top-2 z-50 -right-2 text-white bg-red-600 w-5 text-center h-5 text-sm rounded-full':'hidden'}>{wishIds.length}</div>
                         <WishList className=' top-0' size={32} color='#11d7ac'/>
@@ -608,15 +605,7 @@ export default function buy()
                         <div className='pl-4'>
                             Track Orders
                         </div>
-                    </a> 
-                    <a href='/yourUploads'className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>
-                        <div>
-                            <YourUpload  color='#8A307F'/>
-                        </div>
-                        <div className='pl-4'>
-                            Your Uploads
-                        </div>
-                    </a > 
+                    </a>  
                     <a href='wishlist' className='flex flex-row rounded-lg shadow-lg m-2 p-3 cusor-pointer border-2 border-slate-200'>
                         <div>
                             <WishList  color='#8A307F'/>

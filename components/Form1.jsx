@@ -152,6 +152,20 @@ export default function Form1() {
     // Handle form submission
   };
 
+  const handleCancelToastMsg=(type)=>
+    {
+        if(type=="success")
+        {
+            setSuccessToast(false);
+            setSuccessToastMsg("");
+        }
+        else 
+        {
+            setWarnToast(false);
+            setWarnToastMsg("");
+        }
+    }
+    
   const previewFile = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
