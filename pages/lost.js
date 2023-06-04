@@ -444,7 +444,7 @@ export default function buy()
                 </div>
                 <div className='flex flex-row relative'>
                     <div>
-                        <input className="border md:w-full w-56 rounded-md px-4 py-2 bg-gray-100 text-gray-800 focus:outline-none" 
+                       <input className="border-[#11d7ac] border-2 md:w-full w-56 rounded-md px-4 py-2 shadow-2xl text-gray-800 focus:outline-double" 
                         type="text" 
                         placeholder="Search for an item"
                         value={inputValue}
@@ -767,17 +767,25 @@ export default function buy()
                         <div className='px-4 text-xs'>
                             Contact: {fullItem.contact}
                         </div>
-                        {
-                            requestSentId.includes(fullItem._id)?(
-                                <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
-                                    Request Sent Already!
-                                </div>
-                            ):(
-                                <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
-                                    <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
-                                </div>
-                            )
-                        }
+                        {fullItem.email==email?(
+                            <div className='py-4 mx-auto px-12 mt-6 bg-slate-200 w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                Uploaded by you
+                            </div>
+                        ):(
+                            <div>
+                                {
+                                requestSentId.includes(fullItem._id)?(
+                                    <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
+                                        Request Sent Already!
+                                    </div>
+                                ):(
+                                    <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                        <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
+                                    </div>
+                                )
+                                }
+                            </div>
+                        )}
                     </div>
                 </div>
             ):
@@ -851,17 +859,25 @@ export default function buy()
                         <div className='px-4 text-xs'>
                             Contact: {fullItem.contact}
                         </div>
-                        {
-                            requestSentId.includes(fullItem._id)?(
-                                <div className='py-4 px-4 mx-auto mt-6 cursor-pointer bg-slate-200 w-[4/5] rounded-lg shadow-2xl text-center'>
-                                    Request Sent Already!
-                                </div>
-                            ):(
-                                <div className='py-4 px-4 mx-auto mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-lg shadow-lg text-white text-center'>
-                                    <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
-                                </div>
-                            )
-                        }
+                        {fullItem.email==email?(
+                            <div className='py-4 mx-auto px-12 mt-6 bg-slate-200 w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                Uploaded by you
+                            </div>
+                        ):(
+                            <div>
+                                {
+                                requestSentId.includes(fullItem._id)?(
+                                    <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
+                                        Request Sent Already!
+                                    </div>
+                                ):(
+                                    <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                        <button onClick={()=>handleBuyPopUp(fullItem._id,fullItem.product)}>Send A Request Through Mail</button>
+                                    </div>
+                                )
+                                }
+                            </div>
+                        )}
                     </div>
                 </div>
             ):

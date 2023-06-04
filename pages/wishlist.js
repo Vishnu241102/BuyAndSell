@@ -402,15 +402,23 @@ export default function WishListFile() {
                                                 <span className='font-bold'>Contact: </span> {item.contact}
                                             </div>
                                         </div>
-                                        {requestSentId.includes(item._id)?
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 bg-slate-200 w-auto rounded-lg shadow-lg font-bold text-black text-center'>
-                                                Request Sent Already!
+                                        {item.email==email?(
+                                            <div className='py-4 mx-auto px-12 mt-6 bg-slate-200 w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                Uploaded by you
                                             </div>
-                                        ):
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 cursor-pointer bg-[#8A307F] w-auto rounded-lg shadow-lg text-white text-center'>
-                                                <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request</button>
+                                        ):(
+                                            <div>
+                                                {
+                                                requestSentId.includes(item._id)?(
+                                                    <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
+                                                        Request Sent Already!
+                                                    </div>
+                                                ):(
+                                                    <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                        <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request Through Mail</button>
+                                                    </div>
+                                                )
+                                                }
                                             </div>
                                         )}
                                     </div>
@@ -490,15 +498,23 @@ export default function WishListFile() {
                                                 <span className='font-bold'>Contact: </span> {item.contact}
                                             </div>
                                         </div>
-                                        {requestSentId.includes(item._id)?
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 bg-slate-200 w-auto rounded-lg shadow-lg font-bold text-black text-center'>
-                                                Request Sent Already!
+                                        {item.email==email?(
+                                            <div className='py-4 mx-auto px-12 mt-6 bg-slate-200 w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                Uploaded by you
                                             </div>
-                                        ):
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 cursor-pointer bg-[#8A307F] w-auto rounded-lg shadow-lg text-white text-center'>
-                                                <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request</button>
+                                        ):(
+                                            <div>
+                                                {
+                                                requestSentId.includes(item._id)?(
+                                                    <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
+                                                        Request Sent Already!
+                                                    </div>
+                                                ):(
+                                                    <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                        <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request Through Mail</button>
+                                                    </div>
+                                                )
+                                                }
                                             </div>
                                         )}
                                     </div>
@@ -585,15 +601,23 @@ export default function WishListFile() {
                                                 <span className='font-bold'>Contact: </span> {item.contact}
                                             </div>
                                         </div>
-                                        {requestSentId.includes(item._id)?
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 bg-slate-200 w-auto rounded-lg shadow-lg font-bold text-black text-center'>
-                                                Request Sent Already!
+                                        {item.email==email?(
+                                            <div className='py-4 mx-auto px-12 mt-6 bg-slate-200 w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                Uploaded by you
                                             </div>
-                                        ):
-                                        (
-                                            <div className='py-2 mx-auto px-12 mt-4 cursor-pointer bg-[#8A307F] w-auto rounded-lg shadow-lg text-white text-center'>
-                                                <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request</button>
+                                        ):(
+                                            <div>
+                                                {
+                                                requestSentId.includes(item._id)?(
+                                                    <div className='py-4 mx-auto px-12 mt-6 bg-slate-200  font-bold w-[4/5] rounded-2xl shadow-2xl text-center'>
+                                                        Request Sent Already!
+                                                    </div>
+                                                ):(
+                                                    <div className='py-4 mx-auto px-12 mt-6 cursor-pointer bg-[#8A307F] w-[4/5] rounded-2xl shadow-lg text-white text-center'>
+                                                        <button onClick={()=>handleBuyPopUp(item._id,item.product)}>Send A Request Through Mail</button>
+                                                    </div>
+                                                )
+                                                }
                                             </div>
                                         )}
                                     </div>
