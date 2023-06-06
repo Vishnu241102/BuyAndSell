@@ -416,8 +416,8 @@ export default function yourUploadFile() {
                                 Your Uploads And Track Your Orders...... <span className='text-sm text-black'>click delete icon to delete the item</span>
                             </div>
                             <div className="flex flex-row justify-between mt-8 mx-auto lg:w-96 w-72 bg-white border-slate-200 shadow-2xl border-2">
-                                <button onClick={()=>handleRequest("recieve")} className={(orderType=="recieve")?'w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 ':'w-full font-bold h-auto bg-white md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 '}>Orders Recieved</button>
-                                <button onClick={()=>handleRequest("send")} className={(orderType=="send")?"w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-2 transition-colors duration-1000 ":"w-full font-bold h-auto md:py-4 py-1 md:px-2 px-2 bg-white transition-colors duration-1000 "}>Orders Placed</button>
+                                <button onClick={()=>handleRequest("recieve")} className={(orderType=="recieve")?'w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 ':'w-full font-bold h-auto bg-white md:py-4 py-1 md:px-2 px-1 transition-colors duration-1000 '}>Orders Recieved<span className='text-red-600'> {data1.length}</span></button>
+                                <button onClick={()=>handleRequest("send")} className={(orderType=="send")?"w-full h-auto text-white font-bold bg-[#11d7ac] md:py-4 py-1 md:px-2 px-2 transition-colors duration-1000 ":"w-full font-bold h-auto md:py-4 py-1 md:px-2 px-2 bg-white transition-colors duration-1000 "}>Orders Placed<span className='text-red-600'> {data2.length}</span></button>
                             </div>
                             <div>
                                 {orderType=="recieve"?(
