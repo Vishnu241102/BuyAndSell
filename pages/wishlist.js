@@ -331,8 +331,11 @@ export default function WishListFile() {
                     ))}
                     </div>
                 ):
+                
                 (
-                    ((data1 || data2) || data3)?(
+                    
+                    ((data1 || data2) || data3)?
+                    (
                         <div className='mt-40 md:px-12'>
                         <div className='text-sm fixed right-0 top-1/2 z-[200] bg-[#11d7ac] rounded-lg shadow-xl text-white text-center w-32 px-2 py-2'>
                             Total Items: <span className='text-lg font-bold text-red-600'>{wishIds.length}</span>
@@ -644,6 +647,7 @@ export default function WishListFile() {
                             />
                         </div>
                     )
+                    
                 )
                 }
             </div>

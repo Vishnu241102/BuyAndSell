@@ -51,10 +51,6 @@ export default function Form2() {
         console.log(error);
       }
     }
-    else
-    {
-      setPreviewSource("");
-    }
     if(event.target.files[0])
     {
         previewFile(event.target.files[0]);
@@ -186,20 +182,6 @@ export default function Form2() {
         }
         }, stepDuration);
   }
-
-  const handleCancelToastMsg=(type)=>
-    {
-        if(type=="success")
-        {
-            setSuccessToast(false);
-            setSuccessToastMsg("");
-        }
-        else 
-        {
-            setWarnToast(false);
-            setWarnToastMsg("");
-        }
-    }
 
 
 
