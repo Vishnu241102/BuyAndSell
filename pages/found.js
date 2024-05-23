@@ -326,6 +326,7 @@ export default function buy()
                 setSuccessToastMsg("Request Sent Successfully!")
                 handleX1();
                 setTimeout(() => {
+
                     setSuccessToastMsg("")
                     setSuccessToast(false);
                 }, 4000);
